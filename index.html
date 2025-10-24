@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лаба №1</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="header">
+    <h1>Остапишин Никита Алексеевич</h1>
+    <h3>P3218</h3>
+    <h4>Вариант 18050</h4>
+</div>
+
+<div class="graf">
+    <div class="left" id="graf">
+        <section class="block-section">
+            <div class="graf">
+                <svg height="300" widht="300" xlmns="http://www.w3.org/2000/svg">
+                    <line stroke="gray" x1="0" x2="300" y1="150" y2="150"></line>
+                    <line stroke="gray" x1="150" x2="150" y1="0" y2="300"></line>
+                    <polygon fill="white" points="150,0 144,15 156,15" stroke="grey"></polygon>
+                    <polygon fill="white" points="300,150 285,156 285,144" stroke="grey"></polygon>
+
+                    <line stroke="gray" x1="200" x2="200" y1="155" y2="145"></line>
+                    <line stroke="gray" x1="250" x2="250" y1="155" y2="145"></line>
+
+                    <line stroke="gray" x1="50" x2="50" y1="155" y2="145"></line>
+                    <line stroke="gray" x1="100" x2="100" y1="155" y2="145"></line>
+
+                    <line stroke="gray" x1="145" x2="155" y1="100" y2="100"></line>
+                    <line stroke="gray" x1="145" x2="155" y1="50" y2="50"></line>
+
+                    <line stroke="gray" x1="145" x2="155" y1="200" y2="200"></line>
+                    <line stroke="gray" x1="145" x2="155" y1="250" y2="250"></line>
+
+                    <text fill="grey" x="195" y="140">R/2</text>
+                    <text fill="grey" x="248" y="140">R</text>
+
+                    <text fill="grey" x="40" y="140">-R</text>
+                    <text fill="grey" x="90" y="140">-R/2</text>
+
+                    <text fill="grey" x="160" y="105">R/2</text>
+                    <text fill="grey" x="160" y="55">R</text>
+
+                    <text fill="grey" x="160" y="205">-R/2</text>
+                    <text fill="grey" x="160" y="255">-R</text>
+
+                    <text fill="grey" x="160" y="10">Y</text>
+                    <text fill="grey" x="290" y="140">X</text>
+
+                    <rect x="150" y="150" width="100" height="50" fill="#0000FF" fill-opacity="0.2"
+                          stroke="#0000FF"></rect>
+                    <polygon fill="#0000FF" fill-opacity="0.2" points="50,150 150,150 150,250"
+                             stroke="#0000FF"></polygon>
+                    <path d="M 150 100 A 50, 50, 0, 0, 0, 100 150 L 150 150 Z" 
+      fill-opacity="0.2" fill="#0000FF" stroke="#0000FF"></path>
+                </svg>
+            </div>
+        </section>
+    </div>
+
+    <div class="right-block">
+        <h4 class="input">Введите X</h4>
+        <input type="number" id="xInput" step="any" min="-5" max="3" placeholder="Введите x"/>
+        <h4 class="input">Введите Y</h4>
+        <input type="number" id="yInput" step="any" min="-3" max="3" placeholder="Введите y"/>
+        <h4 class="input">Введите R</h4>
+        <input type="number" id="zInput" step="any" min="1" max="4" placeholder="Введите z"/>
+        <br>
+        <button id="getButton" value="1">Проверить</button>
+    </div>
+</div>
+
+<h1 class="results">Результаты</h1>
+
+<div id="table">
+    <table id="resultsTable" border="1">
+        <tr>
+            <th class="headerTable">X</th>
+            <th class="headerTable">Y</th>
+            <th class="headerTable">R</th>
+            <th class="headerTable">Ответ</th>
+            <th class="headerTable">Время выолнения</th>
+            <th class="headerTable">Время на сервере</th>
+        </tr>
+    </table>
+</div>
+
+<script charset="utf-8" type="text/javascript">
+    let x;
+    let y;
+    let z;
+
+    function sendRequest() {
+        const url = new URL('/fcgi-bin/labweb.jar', window.location.href);
+
+        url.searchParams.set('x', x)
+        url.searchParams.set('y', y)
+        url.searchParams.set('r', z)
+
+        fetch(url.href, {
+            method: 'GET',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Ошибка сети или сервера');
+                }
+                return response.text(); // Возвращаем текст ответа
+            })
+            .then(result => {
+                const table = document.getElementById("resultsTable");
+                const newRow = table.insertRow(); 
+
+                // Заполняем ячейки новой строки
+                const xCell = newRow.insertCell(0);
+                const yCell = newRow.insertCell(1);
+                const zCell = newRow.insertCell(2);
+                const answerCell = newRow.insertCell(3);
+                const executionTimeCell = newRow.insertCell(4);
+                const serverTimeCell = newRow.insertCell(5);
+
+                xCell.innerText = x;  
+                yCell.innerText = y;  
+                zCell.innerText = z;
+
+                const jsonResult = JSON.parse(result);
+                serverTimeCell.innerText = jsonResult.serverTime;  
+                executionTimeCell.innerText = jsonResult.executionTime;  
+                answerCell.innerText = jsonResult.answer ? "Входит" : "Не входит";  
+            });
+    }
+
+    function isEmptyString(str){
+        return !str || !str.trim();
+    }
+
+    function showError(id,mess){
+        const pole = document.getElementById(id);
+        const err = document.createElement('div');
+        pole.style.border = '3px solid #ff4444';
+        err.className="error-mes";
+        err.style.cssText = 'color: #ff4444; font-size:12px; margin-top: 5px;';
+        err.textContent = mess;
+        pole.insertAdjacentElement('afterend',err);
+    }
+
+    function clearErrors(){
+        document.querySelectorAll('input').forEach(input =>{input.style.border='';});
+
+        document.querySelectorAll('.error-mes').forEach(error => {error.remove()})
+    }
+
+    document.getElementById("getButton").onclick = async function () {
+        x = document.getElementById("xInput").value;
+        y = document.getElementById("yInput").value;
+        z = document.getElementById("zInput").value;
+
+        clearErrors();
+
+        if(isEmptyString(x) || x<-5 ||x>3){
+            showError("xInput",'неправильное значение x');
+            return;
+        }
+        if (isEmptyString(y) || y<-3 || y >3){
+            showError("yInput",'неправильное значение y');
+            return;
+        }
+        if(isEmptyString(z)|| z<1 || z>4){
+            showError("zInput",'неправильное значение R');
+            return;
+        }
+        else{
+            sendRequest()
+        }
+    }
+
+</script>
+</body>
+</html>

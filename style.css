@@ -1,0 +1,37 @@
+body {
+    background-color: #2C2F33;
+    color: #FFFFFF;
+    text-align: left;
+}
+
+.header{
+    font-family:serif;
+    font-size:1.1em;
+    color:#57b0ff;
+}
+
+.header h1{
+    font-size:32px;
+    color:#00bfff;
+}
+
+.header h1::first-letter{
+    font-size:45px;
+    color:#57b0ff;
+}
+
+.input{
+    margin-bottom:1%;
+}
+
+#table {
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+
+}
+
+#getButton:hover{
+
+    color:blue;
+}
